@@ -4,6 +4,60 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 
+//@desc Get all Users
+//@route Get /api/users
+//@access public
+const getUsers = asyncHandler(async (req, res) => {
+  const apiKey = req.headers.authorization;
+  if (apiKey !== `Bearer ${process.env.API_KEY}`) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
+  const users = await User.find();
+
+  res.status(200).json(users);
+});
+
+// @desc get Users
+// @route GET /api/users/:id
+// @access public
+const getUser = asyncHandler(async (req, res) => {
+  const apiKey = req.headers.authorization;
+  if (apiKey !== `Bearer ${process.env.API_KEY}`) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
+
+  const user = await User.findById(req.params.id);
+  if (!user) {
+    res.status(404);
+    throw new Error("User not found");
+  }
+  res.status(200).json(user);
+});
+
+//@desc update Users
+//@route PUT /api/users/:id
+//@access public
+const updateUser = asyncHandler(async (req, res) => {
+  const apiKey = req.headers.authorization;
+  if (apiKey !== `Bearer ${process.env.API_KEY}`) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
+
+  const user = await User.findById(req.params.id);
+  if (!user) {
+    res.status(404);
+    throw new Error("User not found");
+  }
+  const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+  });
+
+  res.status(200).json(updatedUser);
+});
+
 //@desc Register a user
 //@route POST /api/users/register
 //@access public
@@ -125,5 +179,8 @@ const loginUser = asyncHandler(async (req, res) => {
 
 module.exports = {
   registerUser,
-  loginUser
+  loginUser,
+  getUsers,
+  getUser,
+  updateUser,
 };

@@ -20,7 +20,7 @@ app.use(express.json());
 app.use("/api/users", require("./src/routes/UserRoutes"));
 
 app.get("/", (req, res) => {
-  res.send("<h1>Welcome to HealthAI</h1>");
+  res.send("<h1>Welcome to Veda Bot</h1>");
 });
 
 app.listen(port, () => {
